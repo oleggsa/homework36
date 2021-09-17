@@ -2,6 +2,13 @@
 
 const todoController = {
     dbName: 'saved_data',
+    idCounter() {
+        if(!localStorage.id){
+            localStorage.setItem('id', 0);
+        }
+        localStorage.id++;
+        return +localStorage.id;
+    },
     getData() {
         if(!todoModel.getData()) return false;
         return JSON.parse(todoModel.getData());
@@ -17,7 +24,7 @@ const todoController = {
             obj[input.name] = input.value;
         }
         obj.completed = false;
-        obj.id = todoView.idCounter;
+        obj.id = this.idCounter();
         return obj;
     },
     remove(elId){
@@ -52,9 +59,8 @@ const todoView = {
     form: document.querySelector('#todoForm'),
     itemClick: document.querySelector('#todoItems'),
     clearBtn: document.querySelector('#clear'),
-    idCounter: 0,
     setEvents() {
-        window.addEventListener('load', this.onLoadFunc.bind(this))
+        window.addEventListener('load', this.onLoadFunc.bind(this));
         this.form.addEventListener('submit', this.formSubmit.bind(this));
         this.itemClick.addEventListener('click', this.doneTask);
         this.itemClick.addEventListener('click', this.removeTask);
@@ -79,7 +85,7 @@ const todoView = {
         });
         }
     },
-    createTemplate(titleText = '', descriptionText = '', id = this.idCounter) {
+    createTemplate(titleText = '', descriptionText = '', id = todoController.idCounter()) {
         const mainWrp = document.createElement('div');
         mainWrp.className = 'col-4';
 
@@ -87,7 +93,6 @@ const todoView = {
         wrp.className = 'taskWrapper';
         wrp.setAttribute('completed', false);
         wrp.id = id;
-        this.idCounter++;
         mainWrp.append(wrp);
 
         const title = document.createElement('div');
