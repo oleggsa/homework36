@@ -2,7 +2,6 @@
 
 const todoController = {
     dbName: 'saved_data',
-    idCounter: 0,
     getData() {
         if(!todoModel.getData()) return false;
         return JSON.parse(todoModel.getData());
@@ -18,8 +17,7 @@ const todoController = {
             obj[input.name] = input.value;
         }
         obj.completed = false;
-        obj.id = this.idCounter;
-        console.log(this.idCounter++);
+        obj.id = todoView.idCounter;
         return obj;
     },
     remove(elId){
@@ -47,9 +45,6 @@ const todoModel = {
     },
     replaceData(newTodoArray) {
         localStorage.setItem(this.dbName, JSON.stringify(newTodoArray));
-    },
-    getId(counter){
-        
     }
 };
 
@@ -57,6 +52,7 @@ const todoView = {
     form: document.querySelector('#todoForm'),
     itemClick: document.querySelector('#todoItems'),
     clearBtn: document.querySelector('#clear'),
+    idCounter: 0,
     setEvents() {
         window.addEventListener('load', this.onLoadFunc.bind(this))
         this.form.addEventListener('submit', this.formSubmit.bind(this));
@@ -78,18 +74,22 @@ const todoView = {
     },
     onLoadFunc() {
         if (todoController.getData()){
-        todoController.getData().forEach(item => this.renderItem(item));
+        // console.log(todoController.getData());
+        todoController.getData().forEach(item => {
+            console.log(item);
+            this.renderItem(item);
+        });
         }
     },
-    createTemplate(titleText = '', descriptionText = '') {
+    createTemplate(titleText = '', descriptionText = '', id = this.idCounter) {
         const mainWrp = document.createElement('div');
         mainWrp.className = 'col-4';
 
         const wrp = document.createElement('div');
         wrp.className = 'taskWrapper';
         wrp.setAttribute('completed', false);
-        wrp.id = todoController.idCounter;
-        console.log(wrp.id);
+        wrp.id = id;
+        this.idCounter++;
         mainWrp.append(wrp);
 
         const title = document.createElement('div');
@@ -114,18 +114,19 @@ const todoView = {
 
         return mainWrp;
     },
-    renderItem({title, description, completed}) {
-        const template = this.createTemplate(title, description);
+    renderItem({title, description, completed, id}) {
+        const template = this.createTemplate(title, description, id);
         template.getElementsByClassName('taskCheckbox')[0].checked = completed || false;
         document.querySelector('#todoItems').prepend(template);
     },
     doneTask(e) {
         if (e.target.classList.contains("taskCheckbox")) {
-            let elId = e.target.parentNode;
+            let elId = e.target.parentNode.id;
             console.log(elId);
             const currentItems = todoController.getData();
+            console.log(currentItems);
             let newItems = currentItems?.map(item => {
-                if (item.id === elId){
+                if (item.id == elId){
                     item.completed = !item.completed;
                 }
                 return item;
@@ -136,10 +137,10 @@ const todoView = {
     removeTask(e) {
         if (e.target.classList.contains("taskRemove")) {
             let elId = e.target.parentNode.id;
+            console.log(elId);
             let rem = todoController.remove(elId);
             let elem = document.getElementById(elId);
             elem.parentNode.parentNode.removeChild(elem.parentNode);
-            console.log(rem);
             todoModel.replaceData(rem || null);
         }
     },
