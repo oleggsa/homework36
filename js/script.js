@@ -74,9 +74,7 @@ const todoView = {
     },
     onLoadFunc() {
         if (todoController.getData()){
-        // console.log(todoController.getData());
         todoController.getData().forEach(item => {
-            console.log(item);
             this.renderItem(item);
         });
         }
@@ -122,9 +120,8 @@ const todoView = {
     doneTask(e) {
         if (e.target.classList.contains("taskCheckbox")) {
             let elId = e.target.parentNode.id;
-            console.log(elId);
+
             const currentItems = todoController.getData();
-            console.log(currentItems);
             let newItems = currentItems?.map(item => {
                 if (item.id == elId){
                     item.completed = !item.completed;
@@ -137,7 +134,6 @@ const todoView = {
     removeTask(e) {
         if (e.target.classList.contains("taskRemove")) {
             let elId = e.target.parentNode.id;
-            console.log(elId);
             let rem = todoController.remove(elId);
             let elem = document.getElementById(elId);
             elem.parentNode.parentNode.removeChild(elem.parentNode);
