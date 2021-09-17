@@ -41,7 +41,6 @@ const todoModel = {
             localStorage.setItem(this.dbName, JSON.stringify(data));
             return data;
         }
-
         const data = [todoItem];
         localStorage.setItem(this.dbName, JSON.stringify(data));
         return data;
