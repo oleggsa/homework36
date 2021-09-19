@@ -1,7 +1,6 @@
 'use strict';
 
 const todoController = {
-    dbName: 'saved_data',
     idCounter() {
         if(!localStorage.id){
             localStorage.setItem('id', 0);
@@ -127,7 +126,7 @@ const todoView = {
 
             const currentItems = todoController.getData();
             let newItems = currentItems?.map(item => {
-                if (item.id == elId){
+                if (item.id === +elId){
                     item.completed = !item.completed;
                 }
                 return item;
@@ -145,7 +144,7 @@ const todoView = {
         }
     },
     removeAll() {
-        localStorage.clear(todoController.dbName);
+        localStorage.clear(todoModel.dbName);
         location.reload();
     }
 };
