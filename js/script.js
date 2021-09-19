@@ -26,13 +26,20 @@ const todoController = {
         obj.id = this.idCounter();
         return obj;
     },
-    remove(elId){
+    removeTask(elId){
         return this.getData().filter(obj => Number.parseInt(obj.id) !== Number.parseInt(elId));
     }
 };
 
 const todoModel = {
     dbName: 'saved_data',
+    removeTask(e) {
+        let elId = e.target.parentNode.id;
+        let rem = todoController.removeTask(elId);
+        let elem = document.getElementById(elId);
+        elem.parentNode.parentNode.removeChild(elem.parentNode);
+        this.replaceData(rem || null);
+    },
     saveData(todoItem) {
         if(localStorage[this.dbName]) {
             const data = JSON.parse(localStorage[this.dbName]);
@@ -136,15 +143,11 @@ const todoView = {
     },
     removeTask(e) {
         if (e.target.classList.contains("taskRemove")) {
-            let elId = e.target.parentNode.id;
-            let rem = todoController.remove(elId);
-            let elem = document.getElementById(elId);
-            elem.parentNode.parentNode.removeChild(elem.parentNode);
-            todoModel.replaceData(rem || null);
+            todoModel.removeTask(e);
         }
     },
     removeAll() {
-        localStorage.clear(todoModel.dbName);
+        localStorage.clear();
         location.reload();
     }
 };
