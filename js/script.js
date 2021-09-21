@@ -28,6 +28,9 @@ const todoController = {
     },
     removeTask(elId){
         return this.getData().filter(obj => Number.parseInt(obj.id) !== Number.parseInt(elId));
+    },
+    removeAll(){
+        todoModel.removeAll();
     }
 };
 
@@ -57,6 +60,10 @@ const todoModel = {
     },
     replaceData(newTodoArray) {
         localStorage.setItem(this.dbName, JSON.stringify(newTodoArray));
+    },
+    removeAll(){
+        localStorage.clear();
+        location.reload();
     }
 };
 
@@ -147,8 +154,7 @@ const todoView = {
         }
     },
     removeAll() {
-        localStorage.clear();
-        location.reload();
+        todoController.removeAll();
     }
 };
 
